@@ -9,7 +9,7 @@ impl Packet for PacketServerList {
     }
 
     fn write<W: Write>(&self, writer: &mut W) {
-        write_String("{ \"version\": { \"name\": \"1.16.4\", \"protocol\": 754 }, \"players\": { \"max\": 100, \"online\": 5, \"sample\": [ { \"name\": \"thinkofdeath\", \"id\": \"4566e69f-c907-48ee-8d71-d7ba5aa00d20\" } ] }, \"description\": { \"text\": \"UH IH UH AH AH TING TANG\" }}", writer);
+        write_String("{ \"version\": { \"name\": \"1.16.3\", \"protocol\": 753 }, \"players\": { \"max\": 100, \"online\": 5, \"sample\": [ { \"name\": \"thinkofdeath\", \"id\": \"4566e69f-c907-48ee-8d71-d7ba5aa00d20\" } ] }, \"description\": { \"text\": \"UH IH UH AH AH TING TANG\" }}", writer);
     }
 
     fn get_id(&self) -> i32 {
