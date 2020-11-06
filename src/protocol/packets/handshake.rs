@@ -25,3 +25,14 @@ impl Packet for PacketHandshake {
         0
     }
 }
+
+impl Default for PacketHandshake {
+    fn default() -> Self {
+        Self {
+            protocol_version: None,
+            server_address: None,
+            port: None,
+            next_state: None,
+        }
+    }
+}

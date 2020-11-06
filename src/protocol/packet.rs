@@ -6,10 +6,6 @@ pub trait Packet {
     fn get_id(&self) -> i32;
 }
 
-pub trait PacketReceiver {
-    fn send_packet<P: Packet>(&mut self, packet: &P);
-}
-
 pub fn get_packet_size<T: Packet>(packet: &T) -> usize {
     let mut bytes: Vec<u8> = Vec::new();
     let mut cursor = Cursor::new(&mut bytes);

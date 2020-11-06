@@ -21,3 +21,9 @@ impl Packet for PacketPingPong {
         1
     }
 }
+
+impl Default for PacketPingPong {
+    fn default() -> Self {
+        Self { challenge: None }
+    }
+}

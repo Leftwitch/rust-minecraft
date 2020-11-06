@@ -1,9 +1,11 @@
+mod connection;
 mod errors;
 mod packet;
 mod packets;
 mod read;
 mod write;
 
+pub use self::connection::*;
 pub use self::errors::*;
 pub use self::packet::*;
 pub use self::packets::*;
