@@ -17,8 +17,26 @@ impl Packet for PacketHandshake {
         self.next_state = Some(read_varint(reader).unwrap());
     }
 
-    fn write<W: Write>(&self, _writer: &mut W) {
-        todo!()
+    fn write<W: Write>(&self, writer: &mut W) {
+        write_varint(
+            self.protocol_version
+                .as_ref()
+                .expect("Protocol version not sot?"),
+            writer,
+        );
+
+        write_String(
+            self.server_address.as_ref().expect("ServerAdress not set?"),
+            writer,
+        );
+        write_u16(self.port.as_ref().expect("Port not set?"), writer);
+
+        write_varint(
+            self.next_state
+                .as_ref()
+                .expect("NextState version not sot?"),
+            writer,
+        );
     }
 
     fn get_id(&self) -> i32 {

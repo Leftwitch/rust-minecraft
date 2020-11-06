@@ -1,10 +1,12 @@
 #![allow(unused_must_use)]
 mod protocol;
-use protocol::*;
+
 use std::{
     net::{TcpListener, TcpStream},
     thread,
 };
+
+use protocol::ProxiedConnection;
 
 fn main() {
     let listener = TcpListener::bind("127.0.0.1:25565").unwrap();
@@ -16,14 +18,11 @@ fn main() {
 
         thread::spawn(|| {
             handle_connection(stream);
-            println!("Connection closed");
         });
     }
 }
 
 fn handle_connection(stream: TcpStream) {
-    let mut connection = UserConnection::new(stream);
-    loop {
-        connection.recv_packet();
-    }
+    let mut connection = ProxiedConnection::new(stream);
+    connection.handle_connection();
 }

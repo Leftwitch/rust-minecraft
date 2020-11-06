@@ -12,8 +12,8 @@ impl Packet for PacketLoginStart {
         }
     }
 
-    fn write<W: Write>(&self, _writer: &mut W) {
-        todo!();
+    fn write<W: Write>(&self, writer: &mut W) {
+        write_String(self.username.as_ref().expect("Username not set?"), writer);
     }
 
     fn get_id(&self) -> i32 {
