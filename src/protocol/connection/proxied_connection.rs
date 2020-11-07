@@ -76,7 +76,7 @@ impl ProxiedConnection {
         let login_request = PacketLoginStart {
             username: Some(username.clone()),
         };
-        let mut server_connection = self.server_connection.as_mut().unwrap();
+        let server_connection = self.server_connection.as_mut().unwrap();
         server_connection.send_packet(&handshake.to_packet());
         server_connection.send_packet(&login_request);
 
@@ -84,20 +84,6 @@ impl ProxiedConnection {
 
         //TODO HANDLE COMPRESSION
         println!("Waiting for Login Success by Server...");
-
-        let packet_id = server_connection.recv_packet();
-        println!("Recieved Packet: {}", packet_id);
-        if packet_id == 2 {
-            println!("Login for user {} success! ", username);
-
-            let mut login_success = PacketLoginSuccess::default();
-            login_success.read(&mut server_connection);
-
-            if let Some(username) = login_success.username {
-                println!("Login for user {} success! ", username);
-                self.proxy_state = ProxyState::PROXYING;
-            }
-        }
     }
 
     pub fn handle_connection(&mut self) {
@@ -151,17 +137,31 @@ impl ProxiedConnection {
                         self.connection_state = ConnectionState::PROXY;
                         println!("NEXT STATE PROXY");
 
-                        let server_connection = TcpStream::connect("172.18.48.1:25564").unwrap();
+                        let server_connection = TcpStream::connect("172.28.192.1:25564").unwrap();
                         let minecraft_connection = MinecraftConnection::new(server_connection);
                         self.connect_to_server(minecraft_connection);
                     }
                 }
-                ConnectionState::PROXY => {
-                    if let ProxyState::PROXYING = self.proxy_state {
-                        //Do Proxy stuff
+                ConnectionState::PROXY => match self.proxy_state {
+                    ProxyState::CONNECTING => {
+                        let mut server_connection = self.server_connection.as_mut().unwrap();
+
+                        let packet_id = server_connection.recv_packet();
+                        println!("Recieved Packet: {}", packet_id);
+                        if packet_id == 2 {
+                            let mut login_success = PacketLoginSuccess::default();
+                            login_success.read(&mut server_connection);
+
+                            if let Some(username) = login_success.username {
+                                println!("Login for user {} success! ", username);
+                                self.proxy_state = ProxyState::PROXYING;
+                            }
+                        }
+                    }
+                    ProxyState::PROXYING => {
                         self.proxy_traffic();
                     }
-                }
+                },
                 ConnectionState::FINISHED => {
                     println!("Connection Finished");
                     break;
